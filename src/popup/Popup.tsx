@@ -1,42 +1,46 @@
-import React, { Component } from "react";
-import {Button} from "./kit";
+import React, {Component, ReactNode} from "react";
+import {Button} from "../kit";
 import {Octokit} from "@octokit/rest";
 import "./Popup.scss";
 
-// export default function Popup() {
-//   useEffect(() => {
-//     // Example of how to send a message to eventPage.ts.
-//     chrome.runtime.sendMessage({ popupMounted: true });
-//   }, []);
-//
-//   return <div className="popupContainer">Hello, world!</div>;
-// }
+interface PopupState {
+    showLogin: boolean
+}
 
-export default class Popup extends Component {
-  constructor(props) {
-    super(props);
+export default class Popup extends Component<{}, PopupState> {
+  constructor(p: {}) {
+    super(p);
+    this.state = {
+        showLogin: false
+    }
     this.handleClick = this.handleClick.bind(this)
+    this.renderBody = this.renderBody.bind(this)
+    this.handleLogin = this.handleLogin.bind(this)
   }
 
     render() {
     return(
         <div className="popupContainer">
-          <Button onClick={this.handleClick}  text="TEST Login" />
+            {this.renderBody()}
         </div>
     )
   }
 
-  handleClick() {
-    let o = new Octokit()
-    o.repos
-        .listForOrg({
-          org: "octokit",
-          type: "public",
-        })
-        .then(({ data }) => {
-          console.log(data)
-          chrome.runtime.sendMessage({ popupMounted: true, data: data })
-        });
+  renderBody(): ReactNode  {
+      if(this.state.showLogin) {
+          return(<div className="form">
+              <Button onClick={this.handleLogin} text="login" />
+          </div>)
+      }
+
+      return(<Button onClick={this.handleClick}  text="TEST Login" />)
   }
 
+  handleClick() {
+    this.setState({showLogin: true})
+  }
+
+  handleLogin() {
+      this.setState({showLogin:false})
+  }
 }
