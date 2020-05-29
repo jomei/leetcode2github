@@ -22,5 +22,7 @@
         "128": "icon128.png"
     },
 
-    "permissions": []
+    "permissions": [
+        "https://api.github.com/*"
+    ]
 }

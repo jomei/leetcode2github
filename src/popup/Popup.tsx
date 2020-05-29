@@ -8,39 +8,130 @@ interface PopupState {
 }
 
 export default class Popup extends Component<{}, PopupState> {
-  constructor(p: {}) {
-    super(p);
-    this.state = {
-        showLogin: false
+    octo: Octokit;
+
+    constructor(p: {}) {
+        super(p);
+        this.state = {
+            showLogin: false
+        }
+        this.handleTestCommit = this.handleTestCommit.bind(this)
+        this.renderBody = this.renderBody.bind(this)
+        this.handleLogin = this.handleLogin.bind(this)
+        this.octo = new Octokit({auth: ""})
+        chrome.runtime.sendMessage({ popupMounted: true, data: this.octo })
     }
-    this.handleClick = this.handleClick.bind(this)
-    this.renderBody = this.renderBody.bind(this)
-    this.handleLogin = this.handleLogin.bind(this)
-  }
 
     render() {
-    return(
-        <div className="popupContainer">
-            {this.renderBody()}
-        </div>
-    )
-  }
+        return (
+            <div className="popupContainer">
+                {this.renderBody()}
+            </div>
+        )
+    }
 
-  renderBody(): ReactNode  {
-      if(this.state.showLogin) {
-          return(<div className="form">
-              <Button onClick={this.handleLogin} text="login" />
-          </div>)
-      }
+    renderBody(): ReactNode {
+        if (this.state.showLogin) {
+            return (<div className="form">
+                <Button onClick={this.handleLogin} text="login"/>
+            </div>)
+        }
 
-      return(<Button onClick={this.handleClick}  text="TEST Login" />)
-  }
+        return (<Button onClick={this.handleTestCommit} text="TEST Commit"/>)
+    }
 
-  handleClick() {
-    this.setState({showLogin: true})
-  }
+    handleTestCommit() {
+        this.setState({showLogin: true})
+    }
 
-  handleLogin() {
-      this.setState({showLogin:false})
-  }
+    async handleLogin() {
+        const data = await this.octo.repos.listForAuthenticatedUser()
+        chrome.runtime.sendMessage({ popupMounted: true, data: data })
+    }
 }
+
+// const createRepo = async (octo: Octokit, org: string, name: string) => {
+//     await octo.repos.createInOrg({org, name, auto_init: true})
+// }
+//
+// const getCurrentCommit = async (
+//     octo: Octokit,
+//     org: string,
+//     repo: string,
+//     branch: string = 'master'
+// ) => {
+//     const {data: refData} = await octo.git.getRef({
+//         owner: org,
+//         repo,
+//         ref: `heads/${branch}`,
+//     })
+//     const commitSha = refData.object.sha
+//     const {data: commitData} = await octo.git.getCommit({
+//         owner: org,
+//         repo,
+//         commit_sha: commitSha,
+//     })
+//     return {
+//         commitSha,
+//         treeSha: commitData.tree.sha,
+//     }
+// }
+//
+// const createNewCommit = async (
+//     octo: Octokit,
+//     org: string,
+//     repo: string,
+//     message: string,
+//     currentTreeSha: string,
+//     currentCommitSha: string
+// ) =>
+//     (await octo.git.createCommit({
+//         owner: org,
+//         repo,
+//         message,
+//         tree: currentTreeSha,
+//         parents: [currentCommitSha],
+//     })).data
+//
+// const setBranchToCommit = (
+//     octo: Octokit,
+//     org: string,
+//     repo: string,
+//     branch: string = `master`,
+//     commitSha: string
+// ) =>
+//     octo.git.updateRef({
+//         owner: org,
+//         repo,
+//         ref: `heads/${branch}`,
+//         sha: commitSha,
+//     })
+//
+//
+// const createNewTree = async (
+//     octo: Octokit,
+//     org: string,
+//     repo: string,
+//     message: string,
+//     blob: string, //Base64 string
+//     currentCommitSha: string,
+//     filePath: string,
+//     parentTreeSha: string
+// ) => {
+//     const tree: Octokit.GitCreateTreeParamsTree = {
+//         path: filePath,
+//         mode: '100644',
+//         type: 'blob',
+//         content: blob
+//     }
+//     const {data} = await octo.git.createTree({
+//         owner: org,
+//         repo,
+//         message,
+//         tree: tree,
+//         parents: [currentCommitSha],
+//     })
+//
+//     return data
+// }
+//
