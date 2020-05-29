@@ -7,6 +7,9 @@ interface PopupState {
     showLogin: boolean
 }
 
+const ORG_NAME = 'jomei'
+const REPO_NAME = 'lc'
+
 export default class Popup extends Component<{}, PopupState> {
     octo: Octokit;
 
@@ -47,6 +50,8 @@ export default class Popup extends Component<{}, PopupState> {
     async handleLogin() {
         const data = await this.octo.repos.listForAuthenticatedUser()
         chrome.runtime.sendMessage({ popupMounted: true, data: data })
+        const curr = await getCurrentCommit(this.octo, ORG_NAME, REPO_NAME)
+        chrome.runtime.sendMessage({ popupMounted: true, data: curr })
     }
 }
 
@@ -54,28 +59,29 @@ export default class Popup extends Component<{}, PopupState> {
 //     await octo.repos.createInOrg({org, name, auto_init: true})
 // }
 //
-// const getCurrentCommit = async (
-//     octo: Octokit,
-//     org: string,
-//     repo: string,
-//     branch: string = 'master'
-// ) => {
-//     const {data: refData} = await octo.git.getRef({
-//         owner: org,
-//         repo,
-//         ref: `heads/${branch}`,
-//     })
-//     const commitSha = refData.object.sha
-//     const {data: commitData} = await octo.git.getCommit({
-//         owner: org,
-//         repo,
-//         commit_sha: commitSha,
-//     })
-//     return {
-//         commitSha,
-//         treeSha: commitData.tree.sha,
-//     }
-// }
+const getCurrentCommit = async (
+    octo: Octokit,
+    org: string,
+    repo: string,
+    branch: string = 'master'
+) => {
+    const {data: refData} = await octo.git.getRef({
+        owner: org,
+        repo,
+        ref: `heads/${branch}`,
+    })
+    const commitSha = refData.object.sha
+    const {data: commitData} = await octo.git.getCommit({
+        owner: org,
+        repo,
+        commit_sha: commitSha,
+    })
+    return {
+        commitSha,
+        treeSha: commitData.tree.sha,
+        test: 'hui',
+    }
+}
 //
 // const createNewCommit = async (
 //     octo: Octokit,
