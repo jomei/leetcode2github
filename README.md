@@ -1,5 +1,5 @@
 # LeetCode2GitHub
-Chrome extension which allows you to save your leetcode solutions easily
+A chrome extension which helps you keep your LeetCode solutions
 
 ## Installation
 TBD
@@ -8,4 +8,9 @@ TBD
 TBD
 
 ## Contribution
-TBD
+This extension is build using:
+* TypeScript
+* React
+* Octokit/rest
+* Bootstrap
+

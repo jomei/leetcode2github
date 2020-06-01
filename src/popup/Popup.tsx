@@ -1,6 +1,7 @@
 import React, {Component, ReactNode} from "react";
 import {Button} from "../kit";
 import {Octokit} from "@octokit/rest";
+import {SolutionForm} from "./SolutionForm";
 import "./Popup.scss";
 
 interface PopupState {
@@ -19,28 +20,17 @@ export default class Popup extends Component<{}, PopupState> {
             showLogin: false
         }
         this.handleTestCommit = this.handleTestCommit.bind(this)
-        this.renderBody = this.renderBody.bind(this)
         this.handleLogin = this.handleLogin.bind(this)
-        this.octo = new Octokit({auth: ""})
+        this.octo = new Octokit({auth: "e2400c83b640fb6aee2d34fed9d5b27df8dbb021"})
         chrome.runtime.sendMessage({ popupMounted: true, data: this.octo })
     }
 
     render() {
         return (
             <div className="popupContainer">
-                {this.renderBody()}
+               <SolutionForm onCancel={this.handleTestCommit} onSubmit={this.handleLogin}/>
             </div>
         )
-    }
-
-    renderBody(): ReactNode {
-        if (this.state.showLogin) {
-            return (<div className="form">
-                <Button onClick={this.handleLogin} text="login"/>
-            </div>)
-        }
-
-        return (<Button onClick={this.handleTestCommit} text="TEST Commit"/>)
     }
 
     handleTestCommit() {
