@@ -14,7 +14,7 @@
     "@types/react": "^16.9.32",
     "@types/react-dom": "^16.9.6",
     "css-loader": "^3.4.2",
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "sass-loader": "^6.0.7",
     "style-loader": "^0.20.3",
     "ts-loader": "^4.0.1",
@@ -24,6 +24,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@octokit/auth-oauth-app": "^3.0.3",
     "@octokit/rest": "^17.9.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"

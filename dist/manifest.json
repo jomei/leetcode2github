@@ -3,13 +3,15 @@
     "name": "LeetCode2GitHub",
     "description":"A chrome extension which helps you keep your LeetCode solutions",
     "version": "0.0.1",
-    "authors": [
-        "Anatoly Nosov <jomeisama@gmail.com>"
-    ],
     "browser_action": {
         "default_icon": "icon16.png",
         "default_popup": "popup.html"
     },
+    "content_scripts": [{
+        "matches": ["http://127.0.0.1:4000/*"],
+        "js": ["js/landing.js"],
+        "run_at": "document_start"
+    }],
     "background": {
         "scripts": ["js/eventPage.js"],
         "persistent": false
@@ -20,7 +22,11 @@
         "128": "icon128.png"
     },
     "permissions": [
+        "http://127.0.0.1:4000/*",
         "https://api.github.com/*",
-        "identity"
+        "https://github.com/login/*",
+        "activeTab",
+        "identity",
+        "tabs"
     ]
 }
