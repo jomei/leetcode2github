@@ -4,7 +4,7 @@
     "description":"A chrome extension which helps you keep your LeetCode solutions",
     "version": "0.0.1",
     "browser_action": {
-        "default_icon": "icon16.png",
+        "default_icon": "icon_g.png",
         "default_popup": "popup.html"
     },
     "content_scripts": [{
