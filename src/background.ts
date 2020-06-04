@@ -1,11 +1,13 @@
 import {GitHub, ClientConfig} from "./gh/GitHub";
 import {AUTH_START, HANDLE_AUTH_CALLBACK, AUTH_SUCCESS, SOLUTION_SUBMIT, IS_AUTHORIZED} from "./const";
 
+const appConfig = require("./config.json")
+
 const initGH = () => {
     const config: ClientConfig = {
-        clientId: "dabfca31c9be61247266",
-        clientSecret: "",//todo: move it to secret
-        redirectURI: "http://127.0.0.1:4000/xyz"
+        clientId: appConfig.clientId,
+        clientSecret: appConfig.clientSecret,
+        redirectURI: appConfig.redirectURI
     }
     GitHub.initialize(config)
 }
