@@ -1,0 +1,5 @@
+export const AUTH_START = "start_login"
+export const HANDLE_AUTH_CALLBACK = "handle_callback"
+export const AUTH_SUCCESS = "auth_success"
+export const SOLUTION_SUBMIT = "solution_submit"
+export const IS_AUTHORIZED = "is_authorized"

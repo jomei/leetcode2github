@@ -13,7 +13,7 @@
         "run_at": "document_start"
     }],
     "background": {
-        "scripts": ["js/eventPage.js"],
+        "scripts": ["js/background.js"],
         "persistent": false
     },
     "icons": {
