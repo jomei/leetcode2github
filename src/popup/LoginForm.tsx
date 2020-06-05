@@ -11,8 +11,7 @@ export default class LoginForm extends Component<{}, {}> {
     render() {
         return(
             <div className="loginForm">
-                <p>Let's authorize with GitHub first</p>
-                <button className="btn btn-primary" onClick={this.onSingInClick}>Sign in</button>
+                <button className="btn btn-large btn-primary" onClick={this.onSingInClick}>Sign in <i className="icon-github-circled" /></button>
             </div>
         )
     }
