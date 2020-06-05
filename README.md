@@ -1,5 +1,7 @@
 # LeetCode2GitHub
-A chrome extension which helps you keep your LeetCode solutions
+![Logo](dist/logo.png?raw=true "Logo")
+
+A simple chrome extension which helps to keep your LeetCode solutions.
 
 ## Installation
 TBD
@@ -12,5 +14,5 @@ This extension is build using:
 * TypeScript
 * React
 * Octokit/rest
-* Bootstrap
+
 
