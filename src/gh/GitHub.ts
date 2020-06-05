@@ -41,7 +41,6 @@ export class GitHub {
 
     static initialize(config: ClientConfig) {
         if (this.inst) {
-            console.log("NEW INITED")
             return
         }
         this.inst = new GitHub(config)
@@ -60,6 +59,11 @@ export class GitHub {
         return this.octo.repos.listForAuthenticatedUser()
     }
 
+    public async authorizeToken(userToken: string) {
+        if(this.octo) { return }
+        this.octo = new Octokit({auth: userToken})
+    }
+
     public async handleCallback(data: AuthCallbackData) {
         if(this.octo == null) {
             this.octo = new Octokit({
@@ -72,8 +76,11 @@ export class GitHub {
                     state: this.generateState(),
                 }
             })
+            console.log(this.octo)
+            console.log(this.octo.auth)
         }
         const authRes = await this.octo.users.getAuthenticated()
+        console.log(authRes)
         this.owner = authRes.data.login
         const repos = await this.getRepos()
         console.log(repos)

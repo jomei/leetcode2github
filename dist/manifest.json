@@ -27,7 +27,7 @@
         "https://api.github.com/*",
         "https://github.com/login/*",
         "activeTab",
-        "identity",
+        "storage",
         "tabs"
     ]
 }

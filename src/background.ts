@@ -10,6 +10,9 @@ const initGH = () => {
         redirectURI: appConfig.redirectURI
     }
     GitHub.initialize(config)
+    if(appConfig.userToken != "") {
+        GitHub.instance().authorizeToken(appConfig.userToken)
+    }
 }
 initGH()
 
@@ -51,7 +54,7 @@ const startAuth = () => {
 }
 
 // Plan:
-// 1. понять как держать приложение авторизованным
+// 1. понять как держать приложение авторизованным(и сделать его снова persistent: false
 // 1.1 закрывать таб с лендингом, после того как авторизовалось
 // + 2. нарисовать формочку если авторизован
 // + 3. засабмитить решение
@@ -61,3 +64,4 @@ const startAuth = () => {
 // + 7. налепить иконку
 // 8. сделать нормальный лендинг
 // + 9. причесать кодетс
+
