@@ -12,6 +12,7 @@ export interface ClientConfig {
     clientId: string
     clientSecret: string
     redirectURI: string
+    userToken: string
 }
 
 export interface AuthCallbackData {
@@ -59,31 +60,30 @@ export class GitHub {
         return this.octo.repos.listForAuthenticatedUser()
     }
 
-    public async authorizeToken(userToken: string) {
+    public authorizeToken(userToken: string) {
         if(this.octo) { return }
-        this.octo = new Octokit({auth: userToken})
+        try {
+            this.octo = new Octokit({auth: userToken})
+        } catch (e) {
+            this.octo = null
+        }
     }
 
     public async handleCallback(data: AuthCallbackData) {
         if(this.octo == null) {
-            this.octo = new Octokit({
-                authStrategy: createOAuthAppAuth,
-                auth: {
-                    clientId: this.config.clientId,
-                    clientSecret: this.config.clientSecret,
-                    code: data.code,
-                    type: "oauth-app",
-                    state: this.generateState(),
-                }
-            })
-            console.log(this.octo)
-            console.log(this.octo.auth)
+            const auth = createOAuthAppAuth({
+                clientId: this.config.clientId,
+                clientSecret: this.config.clientSecret,
+            });
+            const tokenAuth = await auth({
+                type: "token",
+                code: data.code,
+                state: data.state, // todo: compare it with generated one
+            });
+            this.octo = new Octokit({auth: tokenAuth["token"]})
+            this.config.userToken = tokenAuth["token"]
         }
-        const authRes = await this.octo.users.getAuthenticated()
-        console.log(authRes)
-        this.owner = authRes.data.login
-        const repos = await this.getRepos()
-        console.log(repos)
+        return this.config.userToken
     }
 
     public async makeCommit(p: CommitPayload) {
@@ -129,9 +129,6 @@ export class GitHub {
     }
 
     private async getCurrentCommit(repo: string, branch: string = 'master') {
-        console.log(this.owner)
-        console.log(repo)
-        console.log(branch)
         const {data: refData} = await this.octo.git.getRef({
             owner: this.owner,
             repo: repo,

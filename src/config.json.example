@@ -1,7 +1,6 @@
 {
   "clientId": "",
   "clientSecret": "",
-  "redirectURI": ""
-
-  "authToken": ""
+  "redirectURI": "",
+  "userToken": ""
 }

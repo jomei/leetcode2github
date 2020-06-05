@@ -3,22 +3,31 @@ import {AUTH_START, HANDLE_AUTH_CALLBACK, AUTH_SUCCESS, SOLUTION_SUBMIT, IS_AUTH
 
 const appConfig = require("./config.json")
 
-const initGH = () => {
+const initGH = (tokenFromStorage) => {
     const config: ClientConfig = {
         clientId: appConfig.clientId,
         clientSecret: appConfig.clientSecret,
-        redirectURI: appConfig.redirectURI
+        redirectURI: appConfig.redirectURI,
+        userToken: appConfig.userToken
     }
     GitHub.initialize(config)
-    if(appConfig.userToken != "") {
-        GitHub.instance().authorizeToken(appConfig.userToken)
+
+    if(tokenFromStorage && tokenFromStorage != "") {
+        return GitHub.instance().authorizeToken(tokenFromStorage)
+    }
+
+    if(appConfig.userToken != undefined && appConfig.userToken != "") {
+        return GitHub.instance().authorizeToken(appConfig.userToken)
     }
 }
-initGH()
+
+chrome.storage.sync.get(["l2gAuthToken"], (result) => {
+    initGH(result["l2gAuthToken"])
+})
+
 
 // Listen to messages sent from other parts of the extension.
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log(request)
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     switch (request.event) {
         case IS_AUTHORIZED:
             sendResponse(GitHub.instance().isAuthorized())
@@ -27,7 +36,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             startAuth();
             return false
         case HANDLE_AUTH_CALLBACK:
-            GitHub.instance().handleCallback(request.data)
+            const authResult = await GitHub.instance().handleCallback(request.data)
+            chrome.storage.sync.set({"l2gAuthToken": authResult})
             chrome.runtime.sendMessage({event: AUTH_SUCCESS})
             sendResponse(true)
             return false
@@ -35,7 +45,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             GitHub.instance().makeCommit(request.data)
             return true
         case "debug":
-            console.log(request.data)
+            console.log(request)
             break;
         default:
             console.log(`unknown event: ${request.event}`)
@@ -54,7 +64,7 @@ const startAuth = () => {
 }
 
 // Plan:
-// 1. понять как держать приложение авторизованным(и сделать его снова persistent: false
+// + 1. понять как держать приложение авторизованным(и сделать его снова persistent: false
 // 1.1 закрывать таб с лендингом, после того как авторизовалось
 // + 2. нарисовать формочку если авторизован
 // + 3. засабмитить решение
@@ -64,4 +74,7 @@ const startAuth = () => {
 // + 7. налепить иконку
 // 8. сделать нормальный лендинг
 // + 9. причесать кодетс
+// 10. обработать ошибки авторизации
+// 11. пробовать убрать из скоупа организацию
+// 12. запрашивать owner при auth
 
