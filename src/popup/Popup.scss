@@ -1,19 +1,14 @@
-$primary-color: darkblue;
-$background-color: #BADA55;
-
 // Chrome applies an 8px margin by default (gross).
 body {
-    margin: 0px;
+    margin: 0;
 }
 
 .popupContainer {
     align-items: center;
-    background-color: $background-color;
-    border: 2px solid $primary-color;
-    color: $primary-color;
     display: flex;
     font-size: 20px;
     height: 300px;
     justify-content: center;
     width: 250px;
+    padding: 10px;
 }

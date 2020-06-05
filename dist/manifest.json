@@ -22,6 +22,7 @@
         "128": "logo.png"
     },
     "permissions": [
+        "https://stackpath.bootstrapcdn.com/bootstrap/*",
         "http://127.0.0.1:4000/*",
         "https://api.github.com/*",
         "https://github.com/login/*",

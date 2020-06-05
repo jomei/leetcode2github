@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import "./LoginForm.scss";
 import {AUTH_START} from "../const";
 
 export default class LoginForm extends Component<{}, {}> {
@@ -9,9 +10,9 @@ export default class LoginForm extends Component<{}, {}> {
 
     render() {
         return(
-            <div>
-                <p>Wow! It seems like you aren't signed in to GitHub!</p>
-                <button onClick={this.onSingInClick}>Sign in</button>
+            <div className="loginForm">
+                <p>Let's authorize with GitHub first</p>
+                <button className="btn btn-primary" onClick={this.onSingInClick}>Sign in</button>
             </div>
         )
     }
