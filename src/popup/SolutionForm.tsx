@@ -30,20 +30,31 @@ export default class SolutionForm extends Component<{}, SolutionState> {
 
     render() {
         return (
-            <div className="solution-container">
-                <div className="fields">
-                    <input type="text" name="repo" value={this.state.commit.repo} placeholder="repository"
+            <div>
+                <p>Save solution</p>
+                <div className="form-group">
+                    <input type="text" className="form-control" name="repo" value={this.state.commit.repo}
+                           placeholder="repository"
                            onChange={this.onFieldChange}/>
-                    <input type="text" name="fileName" value={this.state.commit.fileName} placeholder="file name"
-                           onChange={this.onFieldChange}/>
-                    <input type="text" name="message" value={this.state.commit.message} placeholder="message"
-                           onChange={this.onFieldChange}/>
-                    <textarea name="content" value={this.state.commit.content}
-                              placeholder="your awesome solution"
-                              onChange={this.onFieldChange}/>
                 </div>
+                <div className="form-group">
+                    <input type="text" className="form-control" name="fileName" value={this.state.commit.fileName}
+                           placeholder="file name"
+                           onChange={this.onFieldChange}/>
+                </div>
+                <div className="form-group">
+                    <input type="text" className="form-control" name="message" value={this.state.commit.message}
+                           placeholder="message"
+                           onChange={this.onFieldChange}/>
+                </div>
+                <div className="form-group">
+                                    <textarea className="form-control" name="content" value={this.state.commit.content}
+                                              placeholder="your awesome solution"
+                                              onChange={this.onFieldChange}/>
+                </div>
+
                 <div className="buttons">
-                    <button className="btn" onClick={this.onSubmit}>Submit</button>
+                    <button className="btn btn-large btn-primary" onClick={this.onSubmit}>Submit</button>
                 </div>
             </div>
         )

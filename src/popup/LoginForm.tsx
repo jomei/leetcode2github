@@ -1,5 +1,4 @@
 import React, {Component} from "react";
-import "./LoginForm.scss";
 import {AUTH_START} from "../const";
 
 export default class LoginForm extends Component<{}, {}> {
@@ -11,7 +10,7 @@ export default class LoginForm extends Component<{}, {}> {
     render() {
         return(
             <div className="loginForm">
-                <button className="btn btn-large btn-primary" onClick={this.onSingInClick}>Sign in <i className="icon-github-circled" /></button>
+                <button className="btn btn-large btn-success" onClick={this.onSingInClick}>Sign in <i className="icon-github-circled" /></button>
             </div>
         )
     }
