@@ -3,6 +3,8 @@ import {AUTH_START, AUTH_CALLBACK, AUTH_SUCCESS, SOLUTION_SUBMIT, GET_USER_DATA}
 
 const appConfig = require("./config.json")
 
+// chrome.storage.sync.remove(["l2gAuthToken"])
+
 const initGH = (tokenFromStorage) => {
     const config: ClientConfig = {
         clientId: appConfig.clientId,

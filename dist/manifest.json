@@ -23,11 +23,10 @@
         "128": "logo.png"
     },
     "permissions": [
-        "https://stackpath.bootstrapcdn.com/bootstrap/*",
+        "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css",
         "https://www.jomeisama.com/l2g-auth",
         "https://api.github.com/*",
         "https://github.com/login/*",
-        "activeTab",
         "storage"
     ]
 }
