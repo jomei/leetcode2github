@@ -9,13 +9,12 @@ export interface SolutionState {
     showError: boolean
 }
 
-//
-// export interface SolutionProps {
-//     onSubmit()
-//     onCancel()
-// }
 
-export default class SolutionForm extends Component<{}, SolutionState> {
+export interface SolutionProps {
+    repos: Array<any> //todo: set Repo type
+}
+
+export default class SolutionForm extends Component<SolutionProps, SolutionState> {
     constructor(props) {
         super(props);
 
@@ -36,8 +35,9 @@ export default class SolutionForm extends Component<{}, SolutionState> {
     }
 
     render() {
-        if(this.state.showError) {
-            return(
+        console.log(this.props.repos)
+        if (this.state.showError) {
+            return (
                 <div className="text-center">
                     <p>Solution commit failed =(</p>
                     <button className="btn btn-large btn-primary" onClick={this.onBackClick}>Try again</button>
@@ -45,22 +45,27 @@ export default class SolutionForm extends Component<{}, SolutionState> {
             )
         }
 
-        if(this.state.showSuccess) {
-            return(
+        if (this.state.showSuccess) {
+            return (
                 <div className="text-center">
                     <p>Solution committed successfully!</p>
                     <button className="btn btn-large btn-success" onClick={this.onBackClick}>Nice!</button>
                 </div>
             )
         }
+
         return (
             <div>
                 <p>Save solution</p>
                 <div className="form-group">
-                    <input type="text" className="form-control" name="repo" value={this.state.commit.repo}
-                           placeholder="Repository"
-                           disabled={this.state.loading}
-                           onChange={this.onCommitFieldChange} required/>
+                    <select className="custom-select" name="repo" value={this.state.commit.repo}
+                            disabled={this.state.loading}
+                            onChange={this.onCommitFieldChange} required>
+                        <option key="" value="">Choose...</option>
+                        {this.props.repos.map((value, index) => {
+                            return <option key={value.name} value={value.name}>{value.name}</option>
+                        })}
+                    </select>
                 </div>
                 <div className="form-group">
                     <input type="text" className="form-control" name="fileName" value={this.state.commit.fileName}
@@ -98,8 +103,7 @@ export default class SolutionForm extends Component<{}, SolutionState> {
     onSubmit() {
         this.setState({loading: true})
         chrome.runtime.sendMessage({type: SOLUTION_SUBMIT, data: this.state.commit}, (isSuccessful) => {
-            console.log(isSuccessful)
-            if(isSuccessful) {
+            if (isSuccessful) {
                 this.setState({showSuccess: true, loading: false})
             } else {
                 this.setState({showError: true, loading: false})

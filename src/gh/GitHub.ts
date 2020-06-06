@@ -20,6 +20,11 @@ export interface AuthCallbackData {
     state: string
 }
 
+export interface UserData {
+    isAuthorized: boolean,
+    repos: Array<any> // todo: set repo type
+}
+
 export class GitHub {
     static inst: GitHub
 
@@ -48,8 +53,19 @@ export class GitHub {
     }
 
 
-    public isAuthorized(): boolean {
-        return this.octo != null
+    public async getUserData() {
+        if(this.octo == null){
+            return {
+                isAuthorized: false,
+                repos: []
+            }
+        }
+
+        const {data} = await this.getRepos()
+        return {
+            isAuthorized: true,
+            repos: this.filterPersonalRepos(data)
+        }
     }
 
     public getLoginURL(): string {
@@ -154,5 +170,10 @@ export class GitHub {
             commitSha,
             treeSha: commitData.tree.sha
         }
+    }
+
+    private filterPersonalRepos(repos: Array<any>) : Array<any> {
+        const owner = this.owner
+        return repos.filter((item) => {return item.owner.login == owner})
     }
 }

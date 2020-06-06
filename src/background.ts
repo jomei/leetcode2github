@@ -1,5 +1,5 @@
-import {GitHub, ClientConfig} from "./gh/GitHub";
-import {AUTH_START, AUTH_CALLBACK, AUTH_SUCCESS, SOLUTION_SUBMIT, IS_AUTHORIZED} from "./messages";
+import {GitHub, ClientConfig, UserData} from "./gh/GitHub";
+import {AUTH_START, AUTH_CALLBACK, AUTH_SUCCESS, SOLUTION_SUBMIT, GET_USER_DATA} from "./messages";
 
 const appConfig = require("./config.json")
 
@@ -28,9 +28,11 @@ chrome.storage.sync.get(["l2gAuthToken"], (result) => {
 // Listen to messages sent from other parts of the extension.
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     switch (message.type) {
-        case IS_AUTHORIZED:
-            sendResponse(GitHub.instance().isAuthorized())
-            return false
+        case GET_USER_DATA:
+            GitHub.instance().getUserData().then((data: UserData) => {
+                sendResponse(data)
+            })
+            return true
         case AUTH_START:
             handleAuthStart();
             return false

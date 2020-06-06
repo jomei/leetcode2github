@@ -2,10 +2,11 @@ import React, {Component} from "react";
 import "./Popup.scss";
 import LoginForm from "./LoginForm";
 import SolutionForm from "./SolutionForm";
+import {UserData} from "../gh/GitHub";
 
 
 interface PopupProps {
-    isAuthorized: boolean
+    userData: UserData
 }
 
 export default class Popup extends Component<PopupProps, {}> {
@@ -23,8 +24,9 @@ export default class Popup extends Component<PopupProps, {}> {
     }
 
     renderBody() {
-        if(this.props.isAuthorized) {
-            return <SolutionForm />
+        if(this.props.userData.isAuthorized) {
+
+            return <SolutionForm repos={this.props.userData.repos}/>
         }
         return <LoginForm />
     }
