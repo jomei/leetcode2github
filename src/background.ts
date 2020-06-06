@@ -12,12 +12,12 @@ const initGH = (tokenFromStorage) => {
     }
     GitHub.initialize(config)
 
-    if(tokenFromStorage && tokenFromStorage != "") {
-        return GitHub.instance().authorizeToken(tokenFromStorage)
-    }
-
     if(appConfig.userToken != undefined && appConfig.userToken != "") {
         return GitHub.instance().authorizeToken(appConfig.userToken)
+    }
+
+    if(tokenFromStorage && tokenFromStorage != "") {
+        return GitHub.instance().authorizeToken(tokenFromStorage)
     }
 }
 
@@ -75,6 +75,6 @@ const startAuth = () => {
 // 8. сделать нормальный лендинг
 // + 9. причесать кодетс
 // 10. обработать ошибки авторизации
-// 11. пробовать убрать из скоупа организацию
-// 12. запрашивать owner при auth
+// + 11. пробовать убрать из скоупа организацию
+// + 12. запрашивать owner при auth
 

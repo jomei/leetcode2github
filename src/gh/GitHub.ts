@@ -60,10 +60,13 @@ export class GitHub {
         return this.octo.repos.listForAuthenticatedUser()
     }
 
-    public authorizeToken(userToken: string) {
+    public async authorizeToken(userToken: string) {
         if(this.octo) { return }
         try {
             this.octo = new Octokit({auth: userToken})
+            const authRes = await this.octo.users.getAuthenticated()
+            console.log(authRes)
+            this.owner = authRes.data.login
         } catch (e) {
             this.octo = null
         }
@@ -82,6 +85,8 @@ export class GitHub {
             });
             this.octo = new Octokit({auth: tokenAuth["token"]})
             this.config.userToken = tokenAuth["token"]
+            const authRes = await this.octo.users.getAuthenticated()
+            this.owner = authRes.data.login
         }
         return this.config.userToken
     }

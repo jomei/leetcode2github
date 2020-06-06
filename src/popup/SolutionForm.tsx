@@ -35,22 +35,22 @@ export default class SolutionForm extends Component<{}, SolutionState> {
                 <div className="form-group">
                     <input type="text" className="form-control" name="repo" value={this.state.commit.repo}
                            placeholder="repository"
-                           onChange={this.onFieldChange}/>
+                           onChange={this.onFieldChange} required/>
                 </div>
                 <div className="form-group">
                     <input type="text" className="form-control" name="fileName" value={this.state.commit.fileName}
                            placeholder="file name"
-                           onChange={this.onFieldChange}/>
+                           onChange={this.onFieldChange} required/>
                 </div>
                 <div className="form-group">
                     <input type="text" className="form-control" name="message" value={this.state.commit.message}
                            placeholder="message"
-                           onChange={this.onFieldChange}/>
+                           onChange={this.onFieldChange} required/>
                 </div>
                 <div className="form-group">
                                     <textarea className="form-control" name="content" value={this.state.commit.content}
                                               placeholder="your awesome solution"
-                                              onChange={this.onFieldChange}/>
+                                              onChange={this.onFieldChange} required/>
                 </div>
 
                 <div className="buttons">
