@@ -92,41 +92,46 @@ export class GitHub {
     }
 
     public async makeCommit(p: CommitPayload) {
-        const curr = await this.getCurrentCommit(p.repo)
+        try {
+            const curr = await this.getCurrentCommit(p.repo)
 
-        const blob = await this.octo.git.createBlob({
-            owner: this.owner,
-            repo: p.repo,
-            content: p.content,
-            encoding: "utf-8"
-        })
+            const blob = await this.octo.git.createBlob({
+                owner: this.owner,
+                repo: p.repo,
+                content: p.content,
+                encoding: "utf-8"
+            })
 
-        const tree = await this.octo.git.createTree({
-            owner: this.owner,
-            repo: p.repo,
-            tree: [{
-                path: p.fileName,
-                mode: `100644`,
-                type: `blob`,
-                sha: blob.data.sha,
-            }],
-            base_tree: curr.treeSha
-        })
+            const tree = await this.octo.git.createTree({
+                owner: this.owner,
+                repo: p.repo,
+                tree: [{
+                    path: p.fileName,
+                    mode: `100644`,
+                    type: `blob`,
+                    sha: blob.data.sha,
+                }],
+                base_tree: curr.treeSha
+            })
 
-        const newCommit = await this.octo.git.createCommit({
-            owner: this.owner,
-            repo: p.repo,
-            message: p.message,
-            tree: tree.data.sha,
-            parents: [curr.commitSha]
-        })
+            const newCommit = await this.octo.git.createCommit({
+                owner: this.owner,
+                repo: p.repo,
+                message: p.message,
+                tree: tree.data.sha,
+                parents: [curr.commitSha]
+            })
 
-        await this.octo.git.updateRef({
-            owner: this.owner,
-            repo: p.repo,
-            ref: 'heads/master',
-            sha: newCommit.data.sha
-        })
+            await this.octo.git.updateRef({
+                owner: this.owner,
+                repo: p.repo,
+                ref: 'heads/master',
+                sha: newCommit.data.sha
+            })
+            return true
+        } catch (e) {
+            return false
+        }
     }
 
     private generateState(): string {

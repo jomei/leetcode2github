@@ -1,4 +1,4 @@
-import {HANDLE_AUTH_CALLBACK} from "./const";
+import {AUTH_CALLBACK} from "./messages";
 import {AuthCallbackData} from "./gh/GitHub";
 
 const parseSearchString = (searchStr): AuthCallbackData => {
@@ -16,7 +16,7 @@ const parseSearchString = (searchStr): AuthCallbackData => {
 }
 
 const data = parseSearchString(window.location.search)
-chrome.runtime.sendMessage({ event: HANDLE_AUTH_CALLBACK, data: data}, () => {
+chrome.runtime.sendMessage({ type: AUTH_CALLBACK, data: data}, () => {
     window.close()
 })
 

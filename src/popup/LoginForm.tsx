@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {AUTH_START} from "../const";
+import {AUTH_START} from "../messages";
 
 export default class LoginForm extends Component<{}, {}> {
     constructor(props) {
@@ -16,6 +16,6 @@ export default class LoginForm extends Component<{}, {}> {
     }
 
     onSingInClick() {
-        return chrome.runtime.sendMessage({ event: AUTH_START})
+        return chrome.runtime.sendMessage({ type: AUTH_START})
     }
 }

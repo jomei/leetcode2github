@@ -1,5 +1,5 @@
 import {GitHub, ClientConfig} from "./gh/GitHub";
-import {AUTH_START, HANDLE_AUTH_CALLBACK, AUTH_SUCCESS, SOLUTION_SUBMIT, IS_AUTHORIZED} from "./const";
+import {AUTH_START, AUTH_CALLBACK, AUTH_SUCCESS, SOLUTION_SUBMIT, IS_AUTHORIZED} from "./messages";
 
 const appConfig = require("./config.json")
 
@@ -25,36 +25,34 @@ chrome.storage.sync.get(["l2gAuthToken"], (result) => {
     initGH(result["l2gAuthToken"])
 })
 
-
 // Listen to messages sent from other parts of the extension.
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-    switch (request.event) {
+chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
+    switch (message.type) {
         case IS_AUTHORIZED:
             sendResponse(GitHub.instance().isAuthorized())
             return false
         case AUTH_START:
-            startAuth();
+            handleAuthStart();
             return false
-        case HANDLE_AUTH_CALLBACK:
-            const authResult = await GitHub.instance().handleCallback(request.data)
-            chrome.storage.sync.set({"l2gAuthToken": authResult})
-            chrome.runtime.sendMessage({event: AUTH_SUCCESS})
-            sendResponse(true)
-            return false
-        case SOLUTION_SUBMIT:
-            GitHub.instance().makeCommit(request.data)
+        case AUTH_CALLBACK:
+            GitHub.instance().handleCallback(message.data).then((userToken) => {
+                chrome.storage.sync.set({"l2gAuthToken": userToken})
+                chrome.runtime.sendMessage({type: AUTH_SUCCESS})
+                sendResponse(true)
+            })
             return true
-        case "debug":
-            console.log(request)
-            break;
+        case SOLUTION_SUBMIT:
+            GitHub.instance().makeCommit(message.data).then((e) => {
+                sendResponse(true)
+            })
+            return true
         default:
-            console.log(`unknown event: ${request.event}`)
+            console.log(`unknown type: ${message.type}`)
             return false;
-
     }
 });
 
-const startAuth = () => {
+const handleAuthStart = () => {
     chrome.tabs.create({url: GitHub.instance().getLoginURL(), selected: true}, function(data) {
         window.close();
         chrome.tabs.getCurrent(function(tab) {
@@ -75,6 +73,7 @@ const startAuth = () => {
 // 8. сделать нормальный лендинг
 // + 9. причесать кодетс
 // 10. обработать ошибки авторизации
+// 10.1 обработать ошибки коммита
 // + 11. пробовать убрать из скоупа организацию
 // + 12. запрашивать owner при auth
-
+// + 13. экран успешного коммита
