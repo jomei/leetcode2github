@@ -10,6 +10,7 @@ const initGH = (tokenFromStorage) => {
         redirectURI: appConfig.redirectURI,
         userToken: appConfig.userToken
     }
+
     GitHub.initialize(config)
 
     if(appConfig.userToken != undefined && appConfig.userToken != "") {

@@ -31,10 +31,12 @@ export class GitHub {
     octo: Octokit
 
     owner: string
+    state: string
     config: ClientConfig
 
     private constructor(config: ClientConfig) {
         this.config = config
+        this.state = this.generateState()
     }
 
     static instance(): GitHub {
@@ -81,7 +83,6 @@ export class GitHub {
         try {
             this.octo = new Octokit({auth: userToken})
             const authRes = await this.octo.users.getAuthenticated()
-            console.log(authRes)
             this.owner = authRes.data.login
         } catch (e) {
             this.octo = null
@@ -90,6 +91,10 @@ export class GitHub {
 
     public async handleCallback(data: AuthCallbackData) {
         if(this.octo == null) {
+            if(data.state == this.state) {
+                throw "State mismatch"
+            }
+
             const auth = createOAuthAppAuth({
                 clientId: this.config.clientId,
                 clientSecret: this.config.clientSecret,
@@ -151,7 +156,7 @@ export class GitHub {
     }
 
     private generateState(): string {
-        return "some_random_string"
+        return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
     }
 
     private async getCurrentCommit(repo: string, branch: string = 'master') {

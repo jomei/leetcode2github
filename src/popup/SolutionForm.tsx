@@ -35,7 +35,6 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
     }
 
     render() {
-        console.log(this.props.repos)
         if (this.state.showError) {
             return (
                 <div className="text-center">

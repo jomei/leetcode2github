@@ -8,7 +8,7 @@
         "default_popup": "popup.html"
     },
     "content_scripts": [{
-        "matches": ["http://127.0.0.1:4000/*"],
+        "matches": ["https://www.jomeisama.com/l2g-auth*"],
         "js": ["js/landing.js"],
         "run_at": "document_start"
     }],
@@ -23,7 +23,8 @@
     },
     "permissions": [
         "https://stackpath.bootstrapcdn.com/bootstrap/*",
-        "http://127.0.0.1:4000/*",
+        "https://www.jomeisama.com/l2g-auth",
+        "https://www.jomeisama.com/*",
         "https://api.github.com/*",
         "https://github.com/login/*",
         "activeTab",
