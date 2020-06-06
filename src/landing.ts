@@ -17,7 +17,13 @@ const parseSearchString = (searchStr): AuthCallbackData => {
 
 const data = parseSearchString(window.location.search)
 chrome.runtime.sendMessage({ type: AUTH_CALLBACK, data: data}, () => {
-    window.close()
+    try {
+        // at the very first callback it throws an error "cripts may close only the windows that were opened by them."
+        // and ruin auth process
+        window.close()
+    }catch (e) {
+        // do nothing
+    }
 })
 
 
