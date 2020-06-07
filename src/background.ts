@@ -47,8 +47,8 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
             })
             return true
         case SOLUTION_SUBMIT:
-            GitHub.instance().makeCommit(message.data).then((e) => {
-                sendResponse(true)
+            GitHub.instance().makeCommit(message.data).then((isSuccessful) => {
+                sendResponse(isSuccessful)
             })
             return true
         default:
