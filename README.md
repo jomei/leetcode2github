@@ -4,7 +4,7 @@
 A simple chrome extension which helps to keep your LeetCode solutions.
 
 ## Installation
-Link to webstore will be here
+Just add it to your browser from the [webstore][store]
 
 ## Usage
 1. Add this extension to your browser
@@ -28,3 +28,4 @@ This extension is build using:
 
 
 [token]: https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
+[store]: https://chrome.google.com/webstore/detail/kbamlgbbijaedbjioeeihphciepmlako
