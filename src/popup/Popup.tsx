@@ -3,10 +3,12 @@ import "./Popup.scss";
 import LoginForm from "./LoginForm";
 import SolutionForm from "./SolutionForm";
 import {UserData} from "../gh/GitHub";
+import {Solution} from "../lc/Solution";
 
 
 interface PopupProps {
     userData: UserData
+    solution: Solution
 }
 
 export default class Popup extends Component<PopupProps, {}> {
@@ -26,7 +28,7 @@ export default class Popup extends Component<PopupProps, {}> {
     renderBody() {
         if(this.props.userData.isAuthorized) {
 
-            return <SolutionForm repos={this.props.userData.repos}/>
+            return <SolutionForm repos={this.props.userData.repos} solution={this.props.solution}/>
         }
         return <LoginForm />
     }

@@ -1,21 +1,23 @@
 import React, {Component} from "react";
 import {CommitPayload} from "../gh/GitHub";
 import {SOLUTION_SUBMIT} from "../messages";
+import {Solution} from "../lc/Solution";
 
 export interface SolutionState {
     commit: CommitPayload
-    loading: boolean,
-    showSuccess: boolean,
+    loading: boolean
+    showSuccess: boolean
     showError: boolean
 }
 
 
 export interface SolutionProps {
     repos: Array<any> //todo: set Repo type
+    solution: Solution
 }
 
 export default class SolutionForm extends Component<SolutionProps, SolutionState> {
-    constructor(props) {
+    constructor(props: SolutionProps) {
         super(props);
 
         this.onCommitFieldChange = this.onCommitFieldChange.bind(this)
@@ -24,9 +26,9 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
         this.state = {
             commit: {
                 repo: "",
-                fileName: "",
-                message: "",
-                content: ""
+                fileName: this.titleToFileName(props.solution.title),
+                message: props.solution.title,
+                content: props.solution.source
             },
             loading: false,
             showSuccess: false,
@@ -113,5 +115,9 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
 
     onBackClick() {
         this.setState({showSuccess: false, showError: false})
+    }
+
+    titleToFileName(title: string): string {
+        return title.toLowerCase().replace(" ", "_")
     }
 }

@@ -8,11 +8,18 @@
         "default_icon": "logo.png",
         "default_popup": "popup.html"
     },
-    "content_scripts": [{
+    "content_scripts": [
+        {
         "matches": ["https://www.jomeisama.com/l2g-auth*"],
         "js": ["js/landing.js"],
         "run_at": "document_start"
-    }],
+        },
+        {
+        "matches": ["https://leetcode.com/problems/*"],
+        "js": ["js/lc.js"],
+        "run_at": "document_start"
+        }
+    ],
     "background": {
         "scripts": ["js/background.js"],
         "persistent": false
@@ -23,6 +30,7 @@
         "128": "logo.png"
     },
     "permissions": [
+        "https://leetcode.com/problems/*",
         "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css",
         "https://www.jomeisama.com/l2g-auth",
         "https://api.github.com/*",
