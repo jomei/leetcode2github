@@ -4,9 +4,9 @@ import Popup from './Popup';
 import {GET_USER_DATA} from "../messages";
 import {UserData} from "../gh/GitHub";
 
-chrome.runtime.sendMessage({type: GET_USER_DATA}, (data: UserData) => {
+chrome.runtime.sendMessage({type: GET_USER_DATA}, ({userData: userData, solution: solution}) => {
     chrome.tabs.query({ active: true, currentWindow: true }, tab => {
-        ReactDOM.render(<Popup userData={data}/>, document.getElementById('popup'));
+        ReactDOM.render(<Popup userData={userData} solution={solution}/>, document.getElementById('popup'));
     });
 })
 

@@ -1,5 +1,12 @@
 import {GitHub, ClientConfig, UserData} from "./gh/GitHub";
-import {AUTH_START, AUTH_CALLBACK, AUTH_SUCCESS, SOLUTION_SUBMIT, GET_USER_DATA} from "./messages";
+import {
+    AUTH_START,
+    AUTH_CALLBACK,
+    AUTH_SUCCESS,
+    SOLUTION_SUBMIT,
+    GET_USER_DATA,
+    LC_SOLUTION_SUBMIT
+} from "./messages";
 
 const appConfig = require("./config.json")
 
@@ -33,7 +40,16 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     switch (message.type) {
         case GET_USER_DATA:
             GitHub.instance().getUserData().then((data: UserData) => {
-                sendResponse(data)
+                chrome.storage.sync.get(["l2gSolution"], ({l2gSolution: solution}) => {
+                    if(Object.keys(solution).length == 0) {
+                        solution = {
+                            title: "",
+                            lang: "",
+                            source:""
+                        }
+                    }
+                    sendResponse({userData: data, solution: solution} )
+                })
             })
             return true
         case AUTH_START:
@@ -51,6 +67,9 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
                 sendResponse(isSuccessful)
             })
             return true
+        case LC_SOLUTION_SUBMIT:
+            chrome.storage.sync.set({"l2gSolution": message.data})
+            return false
         default:
             console.log(`unknown type: ${message.type}`)
             return false;

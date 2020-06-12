@@ -4,7 +4,8 @@ module.exports = {
   entry: {
     popup: path.join(__dirname, "src/popup/index.tsx"),
     background: path.join(__dirname, "src/background.ts"),
-    landing: path.join(__dirname, "src/landing.ts")
+    landing: path.join(__dirname, "src/landing.ts"),
+    lc: path.join(__dirname, "src/lc.ts")
   },
   output: {
     path: path.join(__dirname, "dist/js"),
