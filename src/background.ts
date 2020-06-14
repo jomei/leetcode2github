@@ -8,9 +8,14 @@ import {
     LC_SOLUTION_SUBMIT
 } from "./messages";
 
+const AUTH_TOKEN_KEY = "l2gAuthToken"
+const SOLUTION_KEY = "l2gSolution"
+const REPO_KEY = "l2gRepoName"
+
+
 const appConfig = require("./config.json")
 
-// chrome.storage.sync.remove(["l2gAuthToken"])
+// chrome.storage.sync.remove([AUTH_TOKEN_KEY])
 
 const initGH = (tokenFromStorage) => {
     const config: ClientConfig = {
@@ -31,8 +36,8 @@ const initGH = (tokenFromStorage) => {
     }
 }
 
-chrome.storage.sync.get(["l2gAuthToken"], (result) => {
-    initGH(result["l2gAuthToken"])
+chrome.storage.sync.get([AUTH_TOKEN_KEY], (result) => {
+    initGH(result[AUTH_TOKEN_KEY])
 })
 
 // Listen to messages sent from other parts of the extension.
@@ -40,7 +45,8 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     switch (message.type) {
         case GET_USER_DATA:
             GitHub.instance().getUserData().then((data: UserData) => {
-                chrome.storage.sync.get(["l2gSolution"], ({l2gSolution: solution}) => {
+                chrome.storage.sync.get([SOLUTION_KEY, REPO_KEY], (storageData) => {
+                    let solution = storageData[SOLUTION_KEY]
                     if(!solution || Object.keys(solution).length == 0) {
                         solution = {
                             title: "",
@@ -48,7 +54,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
                             source:""
                         }
                     }
-                    sendResponse({userData: data, solution: solution} )
+                    sendResponse({userData: data, solution: solution, repo: storageData[REPO_KEY]} )
                 })
             })
             return true
@@ -57,7 +63,9 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
             return false
         case AUTH_CALLBACK:
             GitHub.instance().handleCallback(message.data).then((userToken) => {
-                chrome.storage.sync.set({"l2gAuthToken": userToken})
+                let d = {}
+                d[AUTH_TOKEN_KEY] = userToken
+                chrome.storage.sync.set(d)
                 chrome.runtime.sendMessage({type: AUTH_SUCCESS})
                 sendResponse(true)
             })
@@ -65,7 +73,10 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
         case SOLUTION_SUBMIT:
             GitHub.instance().makeCommit(message.data).then((isSuccessful) => {
                 if(isSuccessful) {
-                    chrome.storage.sync.remove(["l2gSolution"])
+                    let repo = {}
+                    repo[REPO_KEY] = message.data.repo
+                    chrome.storage.sync.set(repo)
+                    chrome.storage.sync.remove([SOLUTION_KEY])
                 }
                 sendResponse(isSuccessful)
             })

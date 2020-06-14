@@ -13,6 +13,7 @@ interface PopupState {
 export default class Popup extends Component<{}, PopupState> {
     userData: UserData
     solution: Solution
+    selectedRepo: string
 
     constructor(p: {}) {
         super(p);
@@ -29,9 +30,10 @@ export default class Popup extends Component<{}, PopupState> {
     }
 
     componentDidMount() {
-        chrome.runtime.sendMessage({type: GET_USER_DATA}, ({userData: data, solution: solution}) => {
+        chrome.runtime.sendMessage({type: GET_USER_DATA}, ({userData: data, solution: solution, repo: repo}) => {
             this.userData = data
             this.solution = solution
+            this.selectedRepo = repo
             this.setState({loading: false})
         })
     }
@@ -41,7 +43,7 @@ export default class Popup extends Component<{}, PopupState> {
             return(<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" />)
         }
         if(this.userData.isAuthorized) {
-            return <SolutionForm repos={this.userData.repos} solution={this.solution}/>
+            return <SolutionForm repos={this.userData.repos} solution={this.solution} selectedRepo={this.selectedRepo}/>
         }
         return <LoginForm />
     }

@@ -14,6 +14,7 @@ export interface SolutionState {
 export interface SolutionProps {
     repos: Array<any> //todo: set Repo type
     solution: Solution
+    selectedRepo: string
 }
 
 export default class SolutionForm extends Component<SolutionProps, SolutionState> {
@@ -25,7 +26,7 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
         this.onBackClick = this.onBackClick.bind(this)
         this.state = {
             commit: {
-                repo: "",
+                repo: props.selectedRepo,
                 fileName: generateFileName(props.solution.title, props.solution.lang),
                 message: props.solution.title,
                 content: props.solution.source
