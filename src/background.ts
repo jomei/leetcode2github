@@ -41,7 +41,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
         case GET_USER_DATA:
             GitHub.instance().getUserData().then((data: UserData) => {
                 chrome.storage.sync.get(["l2gSolution"], ({l2gSolution: solution}) => {
-                    if(Object.keys(solution).length == 0) {
+                    if(!solution || Object.keys(solution).length == 0) {
                         solution = {
                             title: "",
                             lang: "",

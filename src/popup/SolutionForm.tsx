@@ -8,6 +8,7 @@ export interface SolutionState {
     loading: boolean
     showSuccess: boolean
     showError: boolean
+    validated: boolean
 }
 
 export interface SolutionProps {
@@ -31,7 +32,8 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
             },
             loading: false,
             showSuccess: false,
-            showError: false
+            showError: false,
+            validated: false
         }
     }
 
@@ -53,11 +55,14 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
                 </div>
             )
         }
-
+        let formClass = "form-group"
+        if(this.state.validated) {
+            formClass += " was-validated"
+        }
         return (
             <div>
                 <p>Save solution</p>
-                <div className="form-group">
+                <div className={formClass}>
                     <select className="custom-select" name="repo" value={this.state.commit.repo}
                             disabled={this.state.loading}
                             onChange={this.onCommitFieldChange} required>
@@ -67,19 +72,19 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
                         })}
                     </select>
                 </div>
-                <div className="form-group">
+                <div className={formClass}>
                     <input type="text" className="form-control" name="fileName" value={this.state.commit.fileName}
                            placeholder="File name"
                            disabled={this.state.loading}
                            onChange={this.onCommitFieldChange} required/>
                 </div>
-                <div className="form-group">
+                <div className={formClass}>
                     <input type="text" className="form-control" name="message" value={this.state.commit.message}
                            placeholder="Message"
                            disabled={this.state.loading}
                            onChange={this.onCommitFieldChange} required/>
                 </div>
-                <div className="form-group">
+                <div className={formClass}>
                                     <textarea className="form-control" name="content" value={this.state.commit.content}
                                               placeholder="Source code"
                                               disabled={this.state.loading}
@@ -101,12 +106,18 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
     }
 
     onSubmit() {
+        this.setState({validated: true})
+        if(!this.isValid()) {
+           return
+        }
+
         this.setState({loading: true})
         chrome.runtime.sendMessage({type: SOLUTION_SUBMIT, data: this.state.commit}, (isSuccessful) => {
             if (isSuccessful) {
                 this.setState({
                     showSuccess: true,
                     loading: false,
+                    validated: false,
                     commit: {
                         message:"",
                         fileName:"",
@@ -123,6 +134,11 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
 
     onBackClick() {
         this.setState({showSuccess: false, showError: false})
+    }
+
+    isValid(): boolean {
+        return this.state.commit.repo != "" &&  this.state.commit.fileName != "" &&
+            this.state.commit.content != "" &&  this.state.commit.message != ""
     }
 }
 
