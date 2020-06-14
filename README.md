@@ -12,7 +12,7 @@ Just add it to your browser from the [webstore][store]
 3. Use this extension after LeetCode problem acceptance(this will happen automatically soon)
 
 ## Contribution
-This extension is build using:
+This extension is built using:
 * TypeScript
 * React
 * Octokit/rest
