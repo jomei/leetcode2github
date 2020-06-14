@@ -10,7 +10,6 @@ export interface SolutionState {
     showError: boolean
 }
 
-
 export interface SolutionProps {
     repos: Array<any> //todo: set Repo type
     solution: Solution
@@ -89,7 +88,7 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
 
                 <button className="btn btn-large btn-primary" onClick={this.onSubmit} disabled={this.state.loading}>
                     {this.state.loading
-                        ? <span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                        ? <span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"/>
                         : "Commit"}
                 </button>
             </div>

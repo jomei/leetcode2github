@@ -4,17 +4,20 @@ import LoginForm from "./LoginForm";
 import SolutionForm from "./SolutionForm";
 import {UserData} from "../gh/GitHub";
 import {Solution} from "../lc/Solution";
+import {GET_USER_DATA} from "../messages";
 
-
-interface PopupProps {
-    userData: UserData
-    solution: Solution
+interface PopupState {
+    loading: boolean
 }
 
-export default class Popup extends Component<PopupProps, {}> {
-    constructor(p: PopupProps) {
+export default class Popup extends Component<{}, PopupState> {
+    userData: UserData
+    solution: Solution
+
+    constructor(p: {}) {
         super(p);
         this.renderBody = this.renderBody.bind(this)
+        this.state = {loading: true}
     }
 
     render() {
@@ -25,10 +28,20 @@ export default class Popup extends Component<PopupProps, {}> {
         )
     }
 
-    renderBody() {
-        if(this.props.userData.isAuthorized) {
+    componentDidMount() {
+        chrome.runtime.sendMessage({type: GET_USER_DATA}, ({userData: data, solution: solution}) => {
+            this.userData = data
+            this.solution = solution
+            this.setState({loading: false})
+        })
+    }
 
-            return <SolutionForm repos={this.props.userData.repos} solution={this.props.solution}/>
+    renderBody() {
+        if(this.state.loading) {
+            return(<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" />)
+        }
+        if(this.userData.isAuthorized) {
+            return <SolutionForm repos={this.userData.repos} solution={this.solution}/>
         }
         return <LoginForm />
     }
