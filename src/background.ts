@@ -64,6 +64,9 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
             return true
         case SOLUTION_SUBMIT:
             GitHub.instance().makeCommit(message.data).then((isSuccessful) => {
+                if(isSuccessful) {
+                    chrome.storage.sync.remove(["l2gSolution"])
+                }
                 sendResponse(isSuccessful)
             })
             return true

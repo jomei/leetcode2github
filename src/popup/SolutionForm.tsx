@@ -105,7 +105,16 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
         this.setState({loading: true})
         chrome.runtime.sendMessage({type: SOLUTION_SUBMIT, data: this.state.commit}, (isSuccessful) => {
             if (isSuccessful) {
-                this.setState({showSuccess: true, loading: false})
+                this.setState({
+                    showSuccess: true,
+                    loading: false,
+                    commit: {
+                        message:"",
+                        fileName:"",
+                        content: "",
+                        repo: this.state.commit.repo
+                    }
+                })
             } else {
                 this.setState({showError: true, loading: false})
             }
