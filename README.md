@@ -11,6 +11,17 @@ Just add it to your browser from the [webstore][store]
 2. Sign in with GitHub
 3. Use this extension after LeetCode problem acceptance(this will happen automatically soon)
 
+## Changelog:
+**Version 0.2.0**:
+- Added solution form validation
+- Added remembering last selected repo and set it as default
+- Added loader while the app is initializing
+- Added solution file name and commit message generation based on the problem title and selected programming language
+
+**Version 0.1.0**:
+- OAuth through GitHub.com
+- Simple form for solution submit
+
 ## Contribution
 This extension is built using:
 * TypeScript
