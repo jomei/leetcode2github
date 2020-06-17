@@ -1,7 +1,7 @@
 import {LC_SOLUTION_SUBMIT} from "./messages";
 import {Solution} from "./lc/Solution";
 
-const addListener = () => {
+function addListener() {
     const submitBtn = document.querySelectorAll('[data-cy="submit-code-btn"]')[0] as HTMLElement
 
     if(!submitBtn) { return }
@@ -18,15 +18,22 @@ const addListener = () => {
     })
 }
 
-const isLoading = (): boolean => {
+function isLoading(): boolean {
     const loading = document.getElementById("initial-loading")
     const app = document.getElementById("app") as HTMLElement
     return !!loading || !app
 }
 
-const clearSource = (rawSource): string => {
+function clearSource(rawSource): string {
     const regex = /[0-9]{1,10}\n/g
     return rawSource.replace(regex, "")
+}
+
+const STATUS_ACCEPTED = "Accepted"
+
+function isAccepted(): boolean {
+    const statusEl = document.querySelectorAll('[data-cy="submissions-content"] .ant-table-row td:nth-child(2)')[0] as HTMLElement
+    return statusEl.innerText == STATUS_ACCEPTED
 }
 
 const start = () => {
