@@ -2,6 +2,9 @@ import React, {Component} from "react";
 import {CommitPayload} from "../gh/GitHub";
 import {SOLUTION_SUBMIT} from "../messages";
 import {Solution} from "../lc/Solution";
+import {RepoSelector} from "./RepoSelector";
+import {SubmitButton} from "./SubmitButton";
+
 
 export interface SolutionState {
     commit: CommitPayload
@@ -57,21 +60,15 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
             )
         }
         let formClass = "form-group"
-        if(this.state.validated) {
+        if (this.state.validated) {
             formClass += " was-validated"
         }
         return (
             <div>
                 <p>Save solution</p>
                 <div className={formClass}>
-                    <select className="custom-select" name="repo" value={this.state.commit.repo}
-                            disabled={this.state.loading}
-                            onChange={this.onCommitFieldChange} required>
-                        <option key="" value="">Choose...</option>
-                        {this.props.repos.map((value, index) => {
-                            return <option key={value.name} value={value.name}>{value.name}</option>
-                        })}
-                    </select>
+                    <RepoSelector repos={this.props.repos} selectedRepo={this.props.selectedRepo}
+                                  onChange={this.onCommitFieldChange} disabled={this.state.loading}/>
                 </div>
                 <div className={formClass}>
                     <input type="text" className="form-control" name="fileName" value={this.state.commit.fileName}
@@ -92,11 +89,7 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
                                               onChange={this.onCommitFieldChange} required/>
                 </div>
 
-                <button className="btn btn-large btn-primary" onClick={this.onSubmit} disabled={this.state.loading}>
-                    {this.state.loading
-                        ? <span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"/>
-                        : "Commit"}
-                </button>
+                <SubmitButton onSubmit={this.onSubmit} disabled={this.state.loading} text="Commit"/>
             </div>
         )
     }
@@ -108,8 +101,8 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
 
     onSubmit() {
         this.setState({validated: true})
-        if(!this.isValid()) {
-           return
+        if (!this.isValid()) {
+            return
         }
 
         this.setState({loading: true})
@@ -120,8 +113,8 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
                     loading: false,
                     validated: false,
                     commit: {
-                        message:"",
-                        fileName:"",
+                        message: "",
+                        fileName: "",
                         content: "",
                         repo: this.state.commit.repo
                     }
@@ -138,8 +131,8 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
     }
 
     isValid(): boolean {
-        return this.state.commit.repo != "" &&  this.state.commit.fileName != "" &&
-            this.state.commit.content != "" &&  this.state.commit.message != ""
+        return this.state.commit.repo != "" && this.state.commit.fileName != "" &&
+            this.state.commit.content != "" && this.state.commit.message != ""
     }
 }
 
@@ -165,7 +158,7 @@ const LANG_MAP = {
 
 function getExtensionByLang(lang: string): string {
     const l = lang.toLowerCase()
-    if(l in LANG_MAP) {
+    if (l in LANG_MAP) {
         return LANG_MAP[l]
     }
     return l

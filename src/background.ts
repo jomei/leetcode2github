@@ -82,7 +82,9 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
             })
             return true
         case LC_SOLUTION_SUBMIT:
-            chrome.storage.sync.set({"l2gSolution": message.data})
+            let d = {}
+            d[SOLUTION_KEY] = message.data
+            chrome.storage.sync.set(d)
             return false
         default:
             console.log(`unknown type: ${message.type}`)
@@ -90,7 +92,7 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     }
 });
 
-const handleAuthStart = () => {
+function handleAuthStart() {
     chrome.tabs.create({url: GitHub.instance().getLoginURL(), selected: true}, function(data) {
         window.close();
         chrome.tabs.getCurrent(function(tab) {

@@ -1,17 +1,33 @@
 // Chrome applies an 8px margin by default (gross).
 body {
-    margin: 0;
+  margin: 0;
 }
 
 .popupContainer {
-    align-items: center;
-    display: flex;
+  align-items: center;
+  display: flex;
+
+  min-height: 190px;
+  justify-content: center;
+  width: 250px;
+  padding: 10px;
+
+  & > div {
+    margin-bottom: 10px;
+  }
+
+  p {
     font-size: 20px;
-    min-height: 350px;
-    justify-content: center;
-    width: 250px;
-    padding: 10px;
-    &>div{
-        margin-bottom: 10px;
-    }
+  }
+}
+
+.settings-form {
+  .form-check {
+    margin-bottom: 10px;
+    font-size: small;
+  }
+
+  .form-check-label {
+    margin-top: 2px;
+  }
 }
