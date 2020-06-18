@@ -5,6 +5,7 @@ import SolutionForm from "./SolutionForm";
 import {UserData} from "../gh/GitHub";
 import {Solution} from "../lc/Solution";
 import {GET_USER_DATA} from "../messages";
+import {SettingsForm} from "./SettingsForm";
 
 interface PopupState {
     loading: boolean
@@ -42,8 +43,11 @@ export default class Popup extends Component<{}, PopupState> {
         if(this.state.loading) {
             return(<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" />)
         }
+        // if(this.userData.isAuthorized) {
+        //     return <SolutionForm repos={this.userData.repos} solution={this.solution} selectedRepo={this.selectedRepo}/>
+        // }
         if(this.userData.isAuthorized) {
-            return <SolutionForm repos={this.userData.repos} solution={this.solution} selectedRepo={this.selectedRepo}/>
+            return <SettingsForm settings={{repo:this.selectedRepo, autoCommitAllowed: false}} repos={this.userData.repos} />
         }
         return <LoginForm />
     }
