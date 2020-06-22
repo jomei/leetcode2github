@@ -16,5 +16,4 @@ export class SubmitButton extends Component<SubmitButtonProps, {}> {
             </button>
         )
     }
-
 }
