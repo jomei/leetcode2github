@@ -5,7 +5,7 @@ import SolutionForm from "./SolutionForm";
 import {UserData} from "../gh/GitHub";
 import {Solution} from "../lc/Solution";
 import {GET_USER_DATA} from "../messages";
-import {SettingsForm} from "./SettingsForm";
+import {Settings, SettingsForm} from "./SettingsForm";
 
 interface PopupState {
     loading: boolean
@@ -15,6 +15,7 @@ export default class Popup extends Component<{}, PopupState> {
     userData: UserData
     solution: Solution
     selectedRepo: string
+    settings: Settings
 
     constructor(p: {}) {
         super(p);
@@ -31,10 +32,9 @@ export default class Popup extends Component<{}, PopupState> {
     }
 
     componentDidMount() {
-        chrome.runtime.sendMessage({type: GET_USER_DATA}, ({userData: data, solution: solution, repo: repo}) => {
-            this.userData = data
-            this.solution = solution
-            this.selectedRepo = repo
+        chrome.runtime.sendMessage({type: GET_USER_DATA}, ({userData: userData, settings: settings}) => {
+            this.userData = userData
+            this.settings = settings
             this.setState({loading: false})
         })
     }
@@ -47,7 +47,7 @@ export default class Popup extends Component<{}, PopupState> {
         //     return <SolutionForm repos={this.userData.repos} solution={this.solution} selectedRepo={this.selectedRepo}/>
         // }
         if(this.userData.isAuthorized) {
-            return <SettingsForm settings={{repo:this.selectedRepo, autoCommitAllowed: false}} repos={this.userData.repos} />
+            return <SettingsForm settings={this.settings} repos={this.userData.repos} />
         }
         return <LoginForm />
     }

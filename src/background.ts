@@ -5,7 +5,7 @@ import {
     AUTH_SUCCESS,
     SOLUTION_SUBMIT,
     GET_USER_DATA,
-    LC_SOLUTION_SUBMIT
+    LC_SOLUTION_SUBMIT, SETTINGS_SAVE
 } from "./messages";
 
 const AUTH_TOKEN_KEY = "l2gAuthToken"
@@ -44,19 +44,26 @@ chrome.storage.sync.get([AUTH_TOKEN_KEY], (result) => {
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     switch (message.type) {
         case GET_USER_DATA:
+            // GitHub.instance().getUserData().then((data: UserData) => {
+            //     chrome.storage.sync.get([SOLUTION_KEY, REPO_KEY], (storageData) => {
+            //         let solution = storageData[SOLUTION_KEY]
+            //         if(!solution || Object.keys(solution).length == 0) {
+            //             solution = {
+            //                 title: "",
+            //                 lang: "",
+            //                 source:""
+            //             }
+            //         }
+            //         sendResponse({userData: data, solution: solution, repo: storageData[REPO_KEY]} )
+            //     })
+            // })
             GitHub.instance().getUserData().then((data: UserData) => {
-                chrome.storage.sync.get([SOLUTION_KEY, REPO_KEY], (storageData) => {
-                    let solution = storageData[SOLUTION_KEY]
-                    if(!solution || Object.keys(solution).length == 0) {
-                        solution = {
-                            title: "",
-                            lang: "",
-                            source:""
-                        }
-                    }
-                    sendResponse({userData: data, solution: solution, repo: storageData[REPO_KEY]} )
+                chrome.storage.sync.get(["l2gSettings"], ({l2gSettings: settings}) => {
+                    console.log()
+                    sendResponse({userData: data, settings: settings})
                 })
             })
+
             return true
         case AUTH_START:
             handleAuthStart();
@@ -86,6 +93,11 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
             d[SOLUTION_KEY] = message.data
             chrome.storage.sync.set(d)
             return false
+        case SETTINGS_SAVE:
+            chrome.storage.sync.set({l2gSettings: message.data}, () => {
+                sendResponse(true)
+            })
+            return true
         default:
             console.log(`unknown type: ${message.type}`)
             return false;

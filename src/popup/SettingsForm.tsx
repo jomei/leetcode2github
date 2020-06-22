@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {RepoSelector} from "./RepoSelector";
 import {SubmitButton} from "./SubmitButton";
+import {SETTINGS_SAVE} from "../messages";
 
 export interface Settings {
     repo: string
@@ -51,7 +52,17 @@ export class SettingsForm extends Component<SettingsFormProps, SettingsFormState
         this.setState(this.state)
     }
 
-    onSubmit() {
+    getSettings(): Settings {
+        return {
+            repo: this.state.repo,
+            autoCommitAllowed: this.state.autoCommitAllowed
+        }
+    }
 
+    onSubmit() {
+        this.setState({loading:true})
+        chrome.runtime.sendMessage({type: SETTINGS_SAVE, data: this.getSettings()}, () => {
+            this.setState({loading: false})
+        })
     }
 }
