@@ -28,20 +28,20 @@ export class SettingsForm extends Component<SettingsFormProps, SettingsFormState
     render() {
         return (
             <div className="settings-form">
-                <p>Settings</p>
+                <p className="form-title">Settings</p>
                 <div className="form-group">
                     <RepoSelector repos={this.props.repos} selectedRepo={this.state.repo}
                                   onChange={this.onFieldChange} disabled={this.state.loading}/>
                 </div>
                 <div className="form-check">
-                    <input className="form-check-input"  type="checkbox" checked={this.state.autoCommitAllowed}
+                    <input className="form-check-input" type="checkbox" checked={this.state.autoCommitAllowed}
                            onChange={this.onFieldChange}
                            name="autoCommitAllowed" id="commitAllowed"/>
                     <label className="form-check-label" htmlFor="commitAllowed">
                         Allow autocommit
                     </label>
+                    <p className="form-tip">The source code will be committed automatically after the solution acceptance</p>
                 </div>
-
                 <SubmitButton onSubmit={this.onSubmit} disabled={this.state.loading} text="Save"/>
             </div>
         )
@@ -60,7 +60,7 @@ export class SettingsForm extends Component<SettingsFormProps, SettingsFormState
     }
 
     onSubmit() {
-        this.setState({loading:true})
+        this.setState({loading: true})
         chrome.runtime.sendMessage({type: SETTINGS_SAVE, data: this.getSettings()}, () => {
             this.setState({loading: false})
         })
