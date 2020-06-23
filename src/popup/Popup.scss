@@ -16,8 +16,13 @@ body {
     margin-bottom: 10px;
   }
 
-  p {
+  .form-title {
     font-size: 20px;
+  }
+
+  .form-tip {
+    font-size: 10px;
+    font-weight: lighter;
   }
 }
 
@@ -31,3 +36,4 @@ body {
     margin-top: 2px;
   }
 }
+
