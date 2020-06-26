@@ -4,6 +4,7 @@ import {SOLUTION_SUBMIT} from "../messages";
 import {Solution} from "../lc/Solution";
 import {RepoSelector} from "./RepoSelector";
 import {SubmitButton} from "./SubmitButton";
+import {generateFileName} from "../generateFileName";
 
 
 export interface SolutionState {
@@ -134,32 +135,4 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
         return this.state.commit.repo != "" && this.state.commit.fileName != "" &&
             this.state.commit.content != "" && this.state.commit.message != ""
     }
-}
-
-function generateFileName(problemTitle: string, lang: string): string {
-    if (problemTitle == "") {
-        return ""
-    }
-    const title = problemTitle.toLowerCase().replace(".", "").replace(" ", "_")
-    return `${title}.${getExtensionByLang(lang)}`
-}
-
-const LANG_MAP = {
-    "python": "py",
-    "python3": "py",
-    "c++": "cpp",
-    "c#": "cs",
-    "javascript": "js",
-    "ruby": "rb",
-    "rust": "rs",
-    "typescript": "ts",
-    "scala": "sc",
-}
-
-function getExtensionByLang(lang: string): string {
-    const l = lang.toLowerCase()
-    if (l in LANG_MAP) {
-        return LANG_MAP[l]
-    }
-    return l
 }

@@ -4,15 +4,20 @@ import {Solution} from "./lc/Solution";
 function addListener() {
     const submitBtn = document.querySelectorAll('[data-cy="submit-code-btn"]')[0] as HTMLElement
 
-    if(!submitBtn) { return }
+    if (!submitBtn) {
+        return
+    }
     const titleEl = document.querySelectorAll('[data-cy="question-title"]')[0] as HTMLElement
     const langEl = document.querySelectorAll('[data-cy="lang-select"]')[0] as HTMLElement
     const sourceEl = document.querySelectorAll('[role="presentation"]')[0] as HTMLElement
     submitBtn.addEventListener("click", (e) => {
-        const msg : Solution = {
-            title: titleEl.innerText,
-            lang: langEl.innerText,
-            source: clearSource(sourceEl.innerText)
+        const msg = {
+            solution: {
+                title: titleEl.innerText,
+                lang: langEl.innerText,
+                source: clearSource(sourceEl.innerText)
+            },
+            isAccepted: isAccepted()
         }
         chrome.runtime.sendMessage({type: LC_SOLUTION_SUBMIT, data: msg})
     })
@@ -37,7 +42,7 @@ function isAccepted(): boolean {
 }
 
 const start = () => {
-    if(isLoading()) {
+    if (isLoading()) {
         return setTimeout(start, 100)
     }
     addListener()
