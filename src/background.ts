@@ -1,4 +1,4 @@
-import {GitHub, ClientConfig, UserData} from "./gh/GitHub";
+import {GitHub, ClientConfig, UserData, CommitPayload} from "./gh/GitHub";
 import {
     AUTH_START,
     AUTH_CALLBACK,
@@ -7,6 +7,7 @@ import {
     GET_USER_DATA,
     LC_SOLUTION_SUBMIT, SETTINGS_SAVE
 } from "./messages";
+import {generateFileName} from "./generateFileName";
 
 const AUTH_TOKEN_KEY = "l2gAuthToken"
 const SOLUTION_KEY = "l2gSolution"
@@ -59,7 +60,6 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
             // })
             GitHub.instance().getUserData().then((data: UserData) => {
                 chrome.storage.sync.get(["l2gSettings"], ({l2gSettings: settings}) => {
-                    console.log()
                     sendResponse({userData: data, settings: settings})
                 })
             })
@@ -90,8 +90,21 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
             return true
         case LC_SOLUTION_SUBMIT:
             let d = {}
-            d[SOLUTION_KEY] = message.data
+            d[SOLUTION_KEY] = message.data.solution
             chrome.storage.sync.set(d)
+            chrome.storage.sync.get(["l2gSettings"], ({l2gSettings: settings}) => {
+                if (settings.autoCommitAllowed && message.data.isAccepted) {
+                    const cp: CommitPayload = {
+                        repo: settings.repo,
+                        content: message.data.solution.source,
+                        message: message.data.solution.title,
+                        fileName: generateFileName(message.data.solution.title, message.data.solution.lang)
+                    }
+                    GitHub.instance().makeCommit(cp).then((isSuccessful)=>{
+                        console.log(isSuccessful)
+                    })
+                }
+            })
             return false
         case SETTINGS_SAVE:
             chrome.storage.sync.set({l2gSettings: message.data}, () => {
@@ -112,14 +125,3 @@ function handleAuthStart() {
         });
     });
 }
-
-
-// План:
-// 0. научиться чекать, что решение принято
-// 1. при открытии апп показывать настойки
-// 1.2 в настройках выбирается репо, и чекбокс с автокоммитом
-// 2. На ассепт
-// 2.1 Если автокоммит отключен - показывать заполненную форму как сейчас
-// 2.2 Если включен то лоадер и успех или ошибку
-// 3. На успех - настройки
-// 4. На ошибку - заполненную форму
