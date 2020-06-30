@@ -1,11 +1,10 @@
 import React, {Component} from "react";
 import "./Popup.scss";
 import LoginForm from "./LoginForm";
-import SolutionForm from "./SolutionForm";
+import SolutionForm, {Settings} from "./SolutionForm";
 import {UserData} from "../gh/GitHub";
 import {Solution} from "../lc/Solution";
 import {GET_USER_DATA} from "../messages";
-import {Settings, SettingsForm} from "./SettingsForm";
 
 interface PopupState {
     loading: boolean
@@ -14,7 +13,6 @@ interface PopupState {
 export default class Popup extends Component<{}, PopupState> {
     userData: UserData
     solution: Solution
-    selectedRepo: string
     settings: Settings
 
     constructor(p: {}) {
@@ -32,8 +30,9 @@ export default class Popup extends Component<{}, PopupState> {
     }
 
     componentDidMount() {
-        chrome.runtime.sendMessage({type: GET_USER_DATA}, ({userData: userData, settings: settings}) => {
-            this.userData = userData
+        chrome.runtime.sendMessage({type: GET_USER_DATA}, ({userData: data, solution: solution, settings: settings}) => {
+            this.userData = data
+            this.solution = solution
             this.settings = settings
             this.setState({loading: false})
         })
@@ -43,11 +42,8 @@ export default class Popup extends Component<{}, PopupState> {
         if(this.state.loading) {
             return(<span className="spinner-grow spinner-grow-sm" role="status" aria-hidden="true" />)
         }
-        // if(this.userData.isAuthorized) {
-        //     return <SolutionForm repos={this.userData.repos} solution={this.solution} selectedRepo={this.selectedRepo}/>
-        // }
         if(this.userData.isAuthorized) {
-            return <SettingsForm settings={this.settings} repos={this.userData.repos} />
+            return <SolutionForm repos={this.userData.repos} solution={this.solution} settings={this.settings}/>
         }
         return <LoginForm />
     }

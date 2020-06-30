@@ -17,23 +17,17 @@ body {
   }
 
   .form-title {
-    font-size: 20px;
+    font-size: 25px;
   }
 
   .form-tip {
     font-size: 10px;
     font-weight: lighter;
   }
-}
 
-.settings-form {
-  .form-check {
-    margin-bottom: 10px;
-    font-size: small;
-  }
-
-  .form-check-label {
-    margin-top: 2px;
+  .content-area{
+    font-size: 12px;
+    min-height: 200px;
   }
 }
 
