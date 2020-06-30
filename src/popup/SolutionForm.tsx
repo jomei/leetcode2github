@@ -81,7 +81,7 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
             <div>
                 <p className="form-title">Save solution</p>
                 <div className={formClass}>
-                    <RepoSelector repos={this.props.repos} selectedRepo={this.state.settings.selectedRepo}
+                    <RepoSelector repos={this.props.repos} name="selectedRepo" selectedRepo={this.state.settings.selectedRepo}
                                   onChange={this.onSettingsFieldChange} disabled={this.state.loading}/>
                 </div>
                 <div className={formClass}>
@@ -127,13 +127,11 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
     }
 
     onCheckboxChange(e) {
-        e.target.value = e.target.checked
-        this.onSettingsFieldChange(e)
+        this.state.settings[e.target.name] = e.target.checked
+        this.setState({settings: this.state.settings})
     }
 
     onSettingsFieldChange(e) {
-        console.log(e.target.name)
-        console.log(e.target.value)
         this.state.settings[e.target.name] = e.target.value
         this.setState({settings: this.state.settings})
     }

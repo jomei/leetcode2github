@@ -5,12 +5,13 @@ interface RepoSelectorProps {
     selectedRepo: string
     onChange: (e: any) => void
     disabled: boolean
+    name?: string
 }
 
 export class RepoSelector extends Component<RepoSelectorProps, {}> {
     render() {
         return (
-            <select className="custom-select" name="repo" value={this.props.selectedRepo}
+            <select className="custom-select" name={this.props.name || "repo"} value={this.props.selectedRepo}
                     disabled={this.props.disabled}
                     onChange={this.props.onChange} required>
                 <option key="" value="">Choose...</option>
