@@ -11,7 +11,7 @@ import {generateFileName} from "./generateFileName";
 
 const AUTH_TOKEN_KEY = "l2gAuthToken"
 const SOLUTION_KEY = "l2gSolution"
-const REPO_KEY = "l2gRepoName"
+const SETTINGS_KEY = "l2gSettings"
 
 
 const appConfig = require("./config.json")
@@ -45,25 +45,19 @@ chrome.storage.sync.get([AUTH_TOKEN_KEY], (result) => {
 chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
     switch (message.type) {
         case GET_USER_DATA:
-            // GitHub.instance().getUserData().then((data: UserData) => {
-            //     chrome.storage.sync.get([SOLUTION_KEY, REPO_KEY], (storageData) => {
-            //         let solution = storageData[SOLUTION_KEY]
-            //         if(!solution || Object.keys(solution).length == 0) {
-            //             solution = {
-            //                 title: "",
-            //                 lang: "",
-            //                 source:""
-            //             }
-            //         }
-            //         sendResponse({userData: data, solution: solution, repo: storageData[REPO_KEY]} )
-            //     })
-            // })
             GitHub.instance().getUserData().then((data: UserData) => {
-                chrome.storage.sync.get(["l2gSettings"], ({l2gSettings: settings}) => {
-                    sendResponse({userData: data, settings: settings})
+                chrome.storage.sync.get([SOLUTION_KEY, SETTINGS_KEY], (storageData) => {
+                    let solution = storageData[SOLUTION_KEY]
+                    if(!solution || Object.keys(solution).length == 0) {
+                        solution = {
+                            title: "",
+                            lang: "",
+                            source:""
+                        }
+                    }
+                    sendResponse({userData: data, solution: solution, settings: storageData[SETTINGS_KEY]} )
                 })
             })
-
             return true
         case AUTH_START:
             handleAuthStart();
@@ -78,11 +72,11 @@ chrome.runtime.onMessage.addListener( (message, sender, sendResponse) => {
             })
             return true
         case SOLUTION_SUBMIT:
-            GitHub.instance().makeCommit(message.data).then((isSuccessful) => {
+            GitHub.instance().makeCommit(message.data.commit).then((isSuccessful) => {
                 if(isSuccessful) {
-                    let repo = {}
-                    repo[REPO_KEY] = message.data.repo
-                    chrome.storage.sync.set(repo)
+                    let settings = {}
+                    settings[SETTINGS_KEY] = message.data.settings
+                    chrome.storage.sync.set(settings)
                     chrome.storage.sync.remove([SOLUTION_KEY])
                 }
                 sendResponse(isSuccessful)

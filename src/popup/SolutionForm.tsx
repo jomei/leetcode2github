@@ -6,35 +6,48 @@ import {RepoSelector} from "./RepoSelector";
 import {SubmitButton} from "./SubmitButton";
 import {generateFileName} from "../generateFileName";
 
+interface Commit {
+    message: string
+    content: string
+    fileName: string
+}
 
 export interface SolutionState {
-    commit: CommitPayload
+    commit: Commit
+    settings: Settings
     loading: boolean
     showSuccess: boolean
     showError: boolean
     validated: boolean
 }
 
+export interface Settings {
+    selectedRepo: string
+    autoCommitAllowed: boolean
+}
+
 export interface SolutionProps {
     repos: Array<any> //todo: set Repo type
     solution: Solution
-    selectedRepo: string
+    settings: Settings
 }
 
 export default class SolutionForm extends Component<SolutionProps, SolutionState> {
     constructor(props: SolutionProps) {
         super(props);
 
-        this.onCommitFieldChange = this.onCommitFieldChange.bind(this)
+        this.onCommitFieldChange = this.onSettingsFieldChange.bind(this)
+        this.onSettingsFieldChange = this.onCommitFieldChange.bind(this)
+        this.onCheckboxChange = this.onCheckboxChange.bind(this)
         this.onSubmit = this.onSubmit.bind(this)
         this.onBackClick = this.onBackClick.bind(this)
         this.state = {
             commit: {
-                repo: props.selectedRepo,
-                fileName: generateFileName(props.solution.title, props.solution.lang),
                 message: props.solution.title,
-                content: props.solution.source
+                fileName: generateFileName(props.solution.title, props.solution.lang),
+                content: props.solution.source,
             },
+            settings: props.settings,
             loading: false,
             showSuccess: false,
             showError: false,
@@ -66,13 +79,14 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
         }
         return (
             <div>
-                <p>Save solution</p>
+                <p className="form-title">Save solution</p>
                 <div className={formClass}>
-                    <RepoSelector repos={this.props.repos} selectedRepo={this.props.selectedRepo}
-                                  onChange={this.onCommitFieldChange} disabled={this.state.loading}/>
+                    <RepoSelector repos={this.props.repos} selectedRepo={this.state.settings.selectedRepo}
+                                  onChange={this.onSettingsFieldChange} disabled={this.state.loading}/>
                 </div>
                 <div className={formClass}>
-                    <input type="text" className="form-control" name="fileName" value={this.state.commit.fileName}
+                    <input type="text" className="form-control" name="fileName"
+                           value={this.state.commit.fileName}
                            placeholder="File name"
                            disabled={this.state.loading}
                            onChange={this.onCommitFieldChange} required/>
@@ -84,10 +98,22 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
                            onChange={this.onCommitFieldChange} required/>
                 </div>
                 <div className={formClass}>
-                                    <textarea className="form-control" name="content" value={this.state.commit.content}
+                                    <textarea className="form-control content-area" name="content"
+                                              value={this.state.commit.content}
                                               placeholder="Source code"
                                               disabled={this.state.loading}
                                               onChange={this.onCommitFieldChange} required/>
+                </div>
+
+                <div className="form-check">
+                    <input className="form-check-input" type="checkbox" checked={this.props.settings.autoCommitAllowed}
+                           onChange={this.onCheckboxChange}
+                           name="autoCommitAllowed" id="commitAllowed"/>
+                    <label className="form-check-label" htmlFor="commitAllowed">
+                        Allow autocommit
+                    </label>
+                    <p className="form-tip">The source code will be committed automatically after the solution
+                        acceptance</p>
                 </div>
 
                 <SubmitButton onSubmit={this.onSubmit} disabled={this.state.loading} text="Commit"/>
@@ -100,6 +126,18 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
         this.setState({commit: this.state.commit})
     }
 
+    onCheckboxChange(e) {
+        e.target.value = e.target.checked
+        this.onSettingsFieldChange(e)
+    }
+
+    onSettingsFieldChange(e) {
+        console.log(e.target.name)
+        console.log(e.target.value)
+        this.state.settings[e.target.name] = e.target.value
+        this.setState({settings: this.state.settings})
+    }
+
     onSubmit() {
         this.setState({validated: true})
         if (!this.isValid()) {
@@ -107,7 +145,10 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
         }
 
         this.setState({loading: true})
-        chrome.runtime.sendMessage({type: SOLUTION_SUBMIT, data: this.state.commit}, (isSuccessful) => {
+        chrome.runtime.sendMessage({
+            type: SOLUTION_SUBMIT,
+            data: {commit: this.getCommitPayload(), settings: this.state.settings}
+        }, (isSuccessful) => {
             if (isSuccessful) {
                 this.setState({
                     showSuccess: true,
@@ -116,8 +157,7 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
                     commit: {
                         message: "",
                         fileName: "",
-                        content: "",
-                        repo: this.state.commit.repo
+                        content: ""
                     }
                 })
             } else {
@@ -127,12 +167,16 @@ export default class SolutionForm extends Component<SolutionProps, SolutionState
         })
     }
 
+    getCommitPayload(): CommitPayload {
+        return {...this.state.commit, repo: this.state.settings.selectedRepo}
+    }
+
     onBackClick() {
         this.setState({showSuccess: false, showError: false})
     }
 
     isValid(): boolean {
-        return this.state.commit.repo != "" && this.state.commit.fileName != "" &&
+        return this.state.settings.selectedRepo != "" && this.state.commit.fileName != "" &&
             this.state.commit.content != "" && this.state.commit.message != ""
     }
 }
